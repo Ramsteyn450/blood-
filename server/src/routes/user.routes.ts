@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { getDonors, getProfile, updateProfile, updateLocation } from '../controllers/user.controller';
+import { authenticate } from '../middleware/auth.middleware';
+const router = Router();
+router.get('/donors', authenticate, getDonors);
+router.get('/profile', authenticate, getProfile);
+router.get('/profile/:id', authenticate, getProfile);
+router.put('/profile', authenticate, updateProfile);
+router.post('/update_location', authenticate, updateLocation);
+export default router;

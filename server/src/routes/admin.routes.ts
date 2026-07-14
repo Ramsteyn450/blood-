@@ -1,0 +1,12 @@
+import { Router } from 'express';
+import { getStats, getAllUsers, banUser, getAllDonations, getReports, markReportReviewed } from '../controllers/admin.controller';
+import { authenticate, requireAdmin } from '../middleware/auth.middleware';
+const router = Router();
+router.use(authenticate, requireAdmin);
+router.get('/stats', getStats);
+router.get('/users', getAllUsers);
+router.patch('/users/:id/ban', banUser);
+router.get('/donations', getAllDonations);
+router.get('/reports', getReports);
+router.patch('/reports/:id/review', markReportReviewed);
+export default router;
