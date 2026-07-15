@@ -5,6 +5,7 @@ import Appointment from '../models/Appointment.model';
 import User from '../models/User.model';
 import Notification from '../models/Notification.model';
 import { differenceInDays } from '../utils/dateUtils';
+import { format } from 'date-fns';
 
 // ─── ORGANIZATION: Create a slot ──────────────────────────────────────────────
 export const createSlot = async (req: AuthRequest, res: Response): Promise<void> => {

@@ -69,10 +69,15 @@ export const rsvpCamp = async (req: AuthRequest, res: Response): Promise<void> =
     }
 
     const userId = req.user?._id;
-    const index = camp.rsvps.indexOf(userId);
+    if (!userId) {
+      res.status(401).json({ message: 'Unauthorized' });
+      return;
+    }
+
+    const index = (camp.rsvps as any).indexOf(userId);
 
     if (index > -1) {
-      camp.rsvps.splice(index, 1);
+      (camp.rsvps as any).splice(index, 1);
     } else {
       camp.rsvps.push(userId);
     }
