@@ -13,10 +13,49 @@ const BLOOD_COLORS: Record<string,string> = { 'A+':'#e74c3c','A-':'#c0392b','B+'
 
 function createDonorIcon(donor: User, selected: boolean) {
   const color = BLOOD_COLORS[donor.bloodType] || '#DC143C';
-  const size = selected ? 52 : 44;
+  const size = selected ? 48 : 38;
   return L.divIcon({
-    html: `<div class="donor-marker-wrap${selected?' donor-marker-pulse':''}" style="position:relative;width:${size}px"><div style="width:${size}px;height:${size}px;border-radius:50%;background:linear-gradient(135deg,${color}dd,${color});border:3px solid white;box-shadow:0 4px 16px ${color}55${selected?`,0 0 0 3px ${color}44`:''};display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;font-weight:800;font-size:${selected?18:15}px;color:white">${donor.name.charAt(0)}</div><div style="position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);background:${color};color:white;font-size:9px;font-weight:900;padding:1px 6px;border-radius:20px;font-family:'DM Sans',sans-serif;white-space:nowrap;border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,.2)">${donor.bloodType}</div></div>`,
-    className:'',iconSize:[size,size+14],iconAnchor:[size/2,size+14],popupAnchor:[0,-(size+14)],
+    html: `
+      <div style="position:relative; width:${size}px; height:${size + 15}px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+        ${selected ? `<div style="position:absolute; top:0; left:0; width:${size}px; height:${size}px; border-radius:50%; border:3px solid ${color}; animation: ping-slow 2s infinite; pointer-events:none;"></div>` : ''}
+        <div style="
+          width:${size}px; 
+          height:${size}px; 
+          border-radius: 50% 50% 50% 0; 
+          transform: rotate(-45deg); 
+          background: linear-gradient(135deg, ${color}, ${color}dd); 
+          border: 2.5px solid white; 
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 2px 6px ${color}33; 
+          display: flex; 
+          align-items: center; 
+          justify-content: center;
+        ">
+          <span style="
+            transform: rotate(45deg); 
+            color: white; 
+            font-family: 'DM Sans', sans-serif; 
+            font-weight: 800; 
+            font-size: ${selected ? '13' : '11'}px;
+            white-space: nowrap;
+          ">${donor.bloodType}</span>
+        </div>
+        <div class="shadow-sm" style="
+          margin-top: 2px;
+          background: #1C1C28;
+          color: white;
+          font-size: 8px;
+          font-weight: 700;
+          padding: 1px 5px;
+          border-radius: 5px;
+          white-space: nowrap;
+          border: 1px solid rgba(255,255,255,0.1);
+        ">${donor.name.split(' ')[0]}</div>
+      </div>
+    `,
+    className: 'donor-marker-wrap',
+    iconSize: [size, size + 20],
+    iconAnchor: [size / 2, size + 15],
+    popupAnchor: [0, -(size + 10)]
   });
 }
 
@@ -132,7 +171,7 @@ export default function MapPage() {
       <div className="flex-1 relative">
         {loading && <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000] glass shadow-lg rounded-full px-4 py-2 flex items-center gap-2 text-sm text-gray-600"><Loader className="w-4 h-4 animate-spin text-blood-600" /> Loading donors...</div>}
         <MapContainer center={[20.5937,78.9629]} zoom={5} style={{ height:'100%', width:'100%' }} zoomControl={true}>
-          <TileLayer attribution='© OpenStreetMap' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>' url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
           <MapControls onLocate={handleLocate} />
           {donors.map(donor => {
             const [lng, lat] = donor.location?.coordinates || [0,0];
