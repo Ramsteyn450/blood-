@@ -8,6 +8,9 @@ export interface User {
   bloodType: BloodType; gender: Gender; profession: string;
   weight: number; takesTablets: boolean; eligible: boolean;
   isBanned: boolean; visibleOnMap: boolean; role: string;
+  availabilityStatus: 'available' | 'busy' | 'offline';
+  preferredLanguage: 'en' | 'ta' | 'hi';
+  organizationName: string;
   location: { type: string; coordinates: [number,number] };
   lastDonationDate: string|null; nextEligibleDate: string|null;
   badges: number; avatar: string; state: string; district: string;
@@ -41,7 +44,37 @@ export interface Report {
 export interface AdminStats {
   totalUsers: number; activeDonors: number; ineligibleUsers: number;
   pendingRequests: number; acceptedRequests: number; totalDonations: number;
-  totalReports: number; communityMessages: number;
+  totalReports: number; communityMessages: number; organizations: number;
 }
 
 export interface DonorStatus { status: RequestStatus; requestId: string; }
+
+export interface Notification {
+  _id: string;
+  type: string;
+  title: string;
+  body: string;
+  read: boolean;
+  actionUrl: string;
+  data: Record<string, unknown>;
+  createdAt: string;
+}
+
+export interface Appointment {
+  _id: string;
+  userId: User | string;
+  donorId: User | string;
+  organizationId: User | string;
+  slotId: { timeSlot: string; date: string; capacity: number; booked: number; location: string } | string;
+  date: string;
+  timeSlot: string;
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
+  badgeAwarded: boolean;
+  eligibilityCheckPassed: boolean;
+  notes: string;
+  completedAt: string | null;
+  cancelledAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+

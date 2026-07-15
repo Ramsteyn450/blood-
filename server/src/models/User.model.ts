@@ -6,6 +6,10 @@ export interface IUser extends Document {
   bloodType: string; gender: string; profession: string; weight: number;
   takesTablets: boolean; eligible: boolean; isBanned: boolean; visibleOnMap: boolean;
   role: string;
+  availabilityStatus: 'available' | 'busy' | 'offline';
+  preferredLanguage: 'en' | 'ta' | 'hi';
+  lastDonationReminderSent: Date | null;
+  organizationName: string;
   location: { type: string; coordinates: [number, number] };
   lastDonationDate: Date | null; nextEligibleDate: Date | null;
   badges: number; avatar: string; state: string; district: string;
@@ -27,7 +31,7 @@ const userSchema = new Schema<IUser>({
   eligible: { type: Boolean, default: true },
   isBanned: { type: Boolean, default: false },
   visibleOnMap: { type: Boolean, default: true },
-  role: { type: String, enum: ['user','admin'], default: 'user' },
+  role: { type: String, enum: ['user','admin','organization'], default: 'user' },
   location: {
     type: { type: String, enum: ['Point'], default: 'Point' },
     coordinates: { type: [Number], default: [0,0] },
@@ -43,6 +47,10 @@ const userSchema = new Schema<IUser>({
   emergencyAvailable: { type: Boolean, default: false },
   profileCompleted: { type: Boolean, default: false },
   lastActiveAt: { type: Date, default: Date.now },
+  availabilityStatus: { type: String, enum: ['available','busy','offline'], default: 'available' },
+  preferredLanguage: { type: String, enum: ['en','ta','hi'], default: 'en' },
+  lastDonationReminderSent: { type: Date, default: null },
+  organizationName: { type: String, default: '' },
 }, { timestamps: true });
 
 userSchema.index({ location: '2dsphere' });

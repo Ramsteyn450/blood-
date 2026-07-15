@@ -12,11 +12,18 @@ import messageRoutes from './routes/message.routes';
 import adminRoutes from './routes/admin.routes';
 import reportRoutes from './routes/report.routes';
 import communityRoutes from './routes/community.routes';
+import appointmentRoutes from './routes/appointment.routes';
+import notificationRoutes from './routes/notification.routes';
+import emergencyRoutes from './routes/emergency.routes';
+import dashboardRoutes from './routes/dashboard.routes';
+import campRoutes from './routes/camp.routes';
 import { errorHandler } from './middleware/error.middleware';
+import { startReminderJob } from './jobs/reminder.job';
 
 dotenv.config();
 const app = express();
 connectDB();
+startReminderJob();
 
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true }));
@@ -31,6 +38,11 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/community', communityRoutes);
+app.use('/api/appointments', appointmentRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/emergency', emergencyRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/camps', campRoutes);
 app.get('/api/health', (_req, res) => res.json({ status: 'ok', message: 'LifeFlow API running 🩸' }));
 
 // Serve client static assets in production

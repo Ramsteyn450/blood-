@@ -14,6 +14,14 @@ import ProfilePage from './pages/ProfilePage';
 import EditProfilePage from './pages/EditProfilePage';
 import AdminDashboard from './pages/AdminDashboard';
 import CommunityPage from './pages/CommunityPage';
+import AppointmentsPage from './pages/AppointmentsPage';
+import DashboardPage from './pages/DashboardPage';
+import OrganizationDashboard from './pages/OrganizationDashboard';
+import LeaderboardPage from './pages/LeaderboardPage';
+import BloodCompatibilityPage from './pages/BloodCompatibilityPage';
+import BloodCampPage from './pages/BloodCampPage';
+import VerifyDonorPage from './pages/VerifyDonorPage';
+import './i18n';
 
 export default function App() {
   const initAuth = useAuthStore((s) => s.initAuth);
@@ -25,16 +33,23 @@ export default function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/verify-donor/:id" element={<VerifyDonorPage />} />
         <Route element={<ProtectedRoute />}>
           <Route element={<Layout />}>
+            <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/map" element={<MapPage />} />
             <Route path="/requests" element={<RequestsPage />} />
+            <Route path="/appointments" element={<AppointmentsPage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/chat/:partnerId" element={<ChatPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/profile/edit" element={<EditProfilePage />} />
             <Route path="/profile/:id" element={<ProfilePage />} />
             <Route path="/community" element={<CommunityPage />} />
+            <Route path="/org-dashboard" element={<OrganizationDashboard />} />
+            <Route path="/leaderboard" element={<LeaderboardPage />} />
+            <Route path="/compatibility" element={<BloodCompatibilityPage />} />
+            <Route path="/camps" element={<BloodCampPage />} />
           </Route>
         </Route>
         <Route element={<AdminRoute />}>

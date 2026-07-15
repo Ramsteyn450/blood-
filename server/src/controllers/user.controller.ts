@@ -4,12 +4,12 @@ import { AuthRequest } from '../middleware/auth.middleware';
 
 export const getDonors = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { bloodType, lat, lng, maxDistance = 50000, gender, state, district, emergencyAvailable, minBadges, profession } = req.query;
+    const { bloodType, lat, lng, maxDistance = 50000, gender, state, district, emergencyAvailable, minBadges, profession, availabilityStatus, name } = req.query;
     const today = new Date();
     const filter: Record<string, unknown> = {
-      eligible: true, isBanned: false, visibleOnMap: true, role: 'user',
+      isBanned: false, visibleOnMap: true,
+      role: { $in: ['user', 'organization'] },
       _id: { $ne: req.user?._id },
-      $or: [{ nextEligibleDate: null }, { nextEligibleDate: { $lte: today } }],
     };
     if (bloodType) filter.bloodType = bloodType;
     if (gender) filter.gender = gender;
@@ -18,6 +18,9 @@ export const getDonors = async (req: AuthRequest, res: Response): Promise<void> 
     if (emergencyAvailable === 'true') filter.emergencyAvailable = true;
     if (minBadges) filter.badges = { $gte: parseInt(minBadges as string) };
     if (profession) filter.profession = { $regex: profession as string, $options: 'i' };
+    if (availabilityStatus) filter.availabilityStatus = availabilityStatus;
+    else filter.availabilityStatus = { $ne: 'offline' }; // hide offline by default
+    if (name) filter.name = { $regex: name as string, $options: 'i' };
 
     const donors = lat && lng
       ? await User.find({ ...filter, location: { $near: { $geometry: { type: 'Point', coordinates: [parseFloat(lng as string), parseFloat(lat as string)] }, $maxDistance: parseInt(maxDistance as string) } } }).select('-password -email -phone').limit(100)
@@ -41,7 +44,7 @@ export const getProfile = async (req: AuthRequest, res: Response): Promise<void>
 
 export const updateProfile = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const allowed = ['name','phone','profession','avatar','visibleOnMap','state','district','bio','publicNote','emergencyAvailable','weight','takesTablets','gender','bloodType'];
+    const allowed = ['name','phone','profession','avatar','visibleOnMap','state','district','bio','publicNote','emergencyAvailable','weight','takesTablets','gender','bloodType','organizationName'];
     const updates: Record<string, unknown> = {};
     for (const f of allowed) { if (req.body[f] !== undefined) updates[f] = req.body[f]; }
     const cur = await User.findById(req.user?._id);
@@ -64,3 +67,26 @@ export const updateLocation = async (req: AuthRequest, res: Response): Promise<v
     res.json({ success: true, user });
   } catch { res.status(500).json({ message: 'Error updating location' }); }
 };
+
+export const updateAvailability = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { availabilityStatus } = req.body;
+    if (!['available','busy','offline'].includes(availabilityStatus)) {
+      res.status(400).json({ message: 'Invalid status. Must be available, busy, or offline' }); return;
+    }
+    const user = await User.findByIdAndUpdate(req.user?._id, { availabilityStatus }, { new: true }).select('-password');
+    res.json({ success: true, user });
+  } catch { res.status(500).json({ message: 'Error updating availability' }); }
+};
+
+export const updateLanguage = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { preferredLanguage } = req.body;
+    if (!['en','ta','hi'].includes(preferredLanguage)) {
+      res.status(400).json({ message: 'Invalid language' }); return;
+    }
+    const user = await User.findByIdAndUpdate(req.user?._id, { preferredLanguage }, { new: true }).select('-password');
+    res.json({ success: true, user });
+  } catch { res.status(500).json({ message: 'Error updating language' }); }
+};
+
