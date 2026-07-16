@@ -348,7 +348,7 @@ function BookingCard({ appt, onCancel, cancelling }: { appt: Booking; onCancel(i
   const [showQrPass, setShowQrPass] = useState(false);
   const donorId = typeof appt.donorId === 'object' ? (appt.donorId as any)?._id : appt.donorId;
 
-  const checkinQrUrl = `https://chart.googleapis.com/chart?chs=180x180&cht=qr&chl=${encodeURIComponent(window.location.origin + '/verify-donor/' + donorId)}`;
+  const checkinQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(window.location.origin + '/verify-donor/' + donorId)}`;
 
   return (
     <div className={`card p-4 ${appt.status==='completed'?'border-blue-100':appt.status==='confirmed'?'border-emerald-100':''}`}>

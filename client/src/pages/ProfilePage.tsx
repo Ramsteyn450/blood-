@@ -41,7 +41,7 @@ export default function ProfilePage() {
   const daysLeft = profile.nextEligibleDate ? differenceInDays(new Date(profile.nextEligibleDate), new Date()) : 0;
   
   // QR Code URL (points to HTML verify page)
-  const checkinQrUrl = `https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${encodeURIComponent(window.location.origin + '/verify-donor/' + profile._id)}`;
+  const checkinQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(window.location.origin + '/verify-donor/' + profile._id)}`;
 
   return (
     <div className="max-w-xl mx-auto px-4 py-8 page-enter space-y-6">
